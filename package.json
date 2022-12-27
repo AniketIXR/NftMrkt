@@ -1,0 +1,26 @@
+{
+  "name": "nftmrkt",
+  "version": "1.0.0",
+  "description": "NFT MarketPlace",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AniketIXR/NftMrkt.git"
+  },
+  "author": "Aniket",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AniketIXR/NftMrkt/issues"
+  },
+  "homepage": "https://github.com/AniketIXR/NftMrkt#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "hardhat": "^2.12.4"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.8.0"
+  }
+}
