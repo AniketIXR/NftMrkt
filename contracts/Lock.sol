@@ -95,7 +95,22 @@ contract NftMrkt is ERC721URIStorage {
 
     }
 
-  
+    //Function for resale
+    function resell(uint tokenID, uint _price) public payable {
+
+       require(idofItem[tokenID].owner == msg.sender,"Only owner can resell");
+       require(msg.value == listingPrice,"Amount must be equal to the listing Price");
+
+       idofItem[tokenID].sldstat=false;
+       idofItem[tokenID].price=_price;
+       idofItem[tokenID].seller = payable(msg.sender);
+       idofItem[tokenID].owner = payable(address(this));
+
+       _itemsSold.decrement();
+
+       _transfer(msg.sender , address(this),tokenID);
+
+    }
 
     //Function to buy NFT
     function BuyNft(uint tokenID) public payable{
