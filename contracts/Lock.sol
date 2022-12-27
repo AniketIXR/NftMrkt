@@ -154,5 +154,74 @@ contract NftMrkt is ERC721URIStorage {
            return _items;
     }
 
+    
+
+
+
+//My items
+
+    funtion myNFT() public view returns(itemMrkt[] memory){
+        uint tcount = _tokenIds.current();
+        
+        uint itemCount =0;
+        uint currindx = 0;
+
+        for(uint i=0; i< tcount;i++)
+        {
+            if(idofItem[i+1].owner == msg.sender)
+            {
+                itemCount+=1;
+            }
+        }
+        
+        itemMrkt[] memory _items = new itemMrkt[](itemCount);
+
+        for(uint i=0;i<itemCount;i++)
+        {
+            if(idofItem[i+1].owner== msg.sender)
+            {
+                uint currid = i+1;
+
+                _items[currid] = idofItem[currid];
+                // _items storage curritem = idofItem[currid];
+                // items[currid]= curritem;
+                currid += 1;
+            
+            }
+          
+        }
+        return _items;
+    }
+
+    // Nft info
+
+    function NFTinfo() public view return(idofItem[] memory){
+
+        uint totalCount = _tokenIDs.current();
+        uint itemCount=0;
+        uint currindx =0;
+
+        for(uint i=0; i< totalCount; i++){
+            if(idofItem[i+1].seller == msg.sender)
+            {
+                itemCount + =1;
+            }
+        }
+        itemMrkt[] memory _items = new itemMrkt[](itemCount);
+
+        for(uint i=0; i<totalCount; i++)
+        {
+            if(idofItem[i+1].seller == msg.seller){
+                uint currid = i+1;
+                _items[currid] = idofItem[currid];
+                // _items storage curritem = idofItem[currid];
+                // items[currid]= curritem;
+                currid += 1;
+
+            }
+        }
+        return _items;
+    }
+
 
 }
