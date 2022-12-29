@@ -108,7 +108,7 @@ contract NftMrkt is ERC721URIStorage {
 
        _itemsSold.decrement();
 
-       _transfer(msg.sender , address(this),tokenID);
+       _transfer(msg.sender , address(this),tokenID)
 
     }
 
