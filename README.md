@@ -8,7 +8,7 @@ Stages:
 
 3)Writing the Api ✅
 
-4)Connecting the Api with databae
+4)Connecting the Api with databae ✅
 
 5)Connecting the contract to frontend
 
