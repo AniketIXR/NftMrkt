@@ -1,4 +1,4 @@
-Hi , this is Nft Market Place Project.
+Hi , this is a Nft Market Place Project.
 
 Stages:
 
