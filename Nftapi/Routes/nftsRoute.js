@@ -11,7 +11,7 @@ const {
 
 const router = express.Router();
 
-router.param("id", checkID);
+// router.param("id", checkID);
 
 
 const app = express();
@@ -20,7 +20,7 @@ app.use(express.json());
 
 router.route('/')
      .get(getNfts)
-     .post(checkBody,createNft);
+     .post(createNft);
 router.route('/:id')
       .get(getNft)
       .patch(updateNft)
