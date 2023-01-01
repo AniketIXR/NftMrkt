@@ -3,10 +3,54 @@ const NFT = require('../models/nftModels');
 exports.getNfts =async(req, res)=>{
    
     try {
-        console.log(req.query);
-        const nfts = await NFT.find();//find will give all the documents
+        // console.log(req.query);
+        // const nfts = await NFT.find();//find will give all the documents
+        // const nfts = await NFT.find(req.query);
+//Query Building
+        const queryObj = {...req.query};
+        const excludeFields =["page","sort","limit","fields"];
+        excludeFields.forEach(field=> delete queryObj[field]);
+//Filtering query
+        let queryString = JSON.stringify(queryObj);
+        queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match) =>`$${match}`);
+//Using the query to filter nft         
+        const query = NFT.find(JSON.parse(queryString));
+//Sorting the data
+        if(req.query.sort)
+        {
+            const sortcon= req.query.sort.split(',').join(' ');
+            query.sort(sortcon);
+        }
+        else
+        {
+            query.sort("-creationTime");
+        }
+//Filtering the Fields
+       if(req.query.fields)
+       {
+        
+        const fields = req.query.fields.split(',').join(' ');
+        console.log(fields);
+        query.select(fields);
+       }     
+//Pagination      
+       const page = req.query.page *1 || 1;
+       const limit = req.query.limit *1 || 5;
+       const skip = (page-1)*limit;
+       query.skip(skip).limit(limit);
+       
+//ERROR
+    //     if(req.query.page)
+    //    {
+    //       const nftcount = await NFT.countDocuments();
+    //       if(skip >= nftcount) throw new Error("This Page is not available")
+    //    }
+
+        const nfts = await query ;
+//Sending the response
         res.status(200).json({
             status: 'success',
+            result:nfts.length,
             data:{
                 nfts
             },
