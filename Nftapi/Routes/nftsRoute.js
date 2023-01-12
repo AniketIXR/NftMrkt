@@ -6,7 +6,8 @@ const {
     getNft,
     createNft,
     updateNft,
-    deleteNft
+    deleteNft,
+    getNFTStats
 } = require('../Controller/nftController');
 
 const router = express.Router();
@@ -17,6 +18,8 @@ const router = express.Router();
 const app = express();
 
 app.use(express.json());
+
+router.route('/nfts-stats').get(getNFTStats);
 
 router.route('/')
      .get(getNfts)

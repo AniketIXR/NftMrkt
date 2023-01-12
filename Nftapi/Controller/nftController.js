@@ -1,52 +1,16 @@
 
 const NFT = require('../models/nftModels');
+const ApiFeatures = require('../Utils/apiFeatures');
 exports.getNfts =async(req, res)=>{
-   
+  
     try {
-        // console.log(req.query);
-        // const nfts = await NFT.find();//find will give all the documents
-        // const nfts = await NFT.find(req.query);
-//Query Building
-        const queryObj = {...req.query};
-        const excludeFields =["page","sort","limit","fields"];
-        excludeFields.forEach(field=> delete queryObj[field]);
-//Filtering query
-        let queryString = JSON.stringify(queryObj);
-        queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match) =>`$${match}`);
-//Using the query to filter nft         
-        const query = NFT.find(JSON.parse(queryString));
-//Sorting the data
-        if(req.query.sort)
-        {
-            const sortcon= req.query.sort.split(',').join(' ');
-            query.sort(sortcon);
-        }
-        else
-        {
-            query.sort("-creationTime");
-        }
-//Filtering the Fields
-       if(req.query.fields)
-       {
-        
-        const fields = req.query.fields.split(',').join(' ');
-        console.log(fields);
-        query.select(fields);
-       }     
-//Pagination      
-       const page = req.query.page *1 || 1;
-       const limit = req.query.limit *1 || 5;
-       const skip = (page-1)*limit;
-       query.skip(skip).limit(limit);
-       
-//ERROR
-    //     if(req.query.page)
-    //    {
-    //       const nftcount = await NFT.countDocuments();
-    //       if(skip >= nftcount) throw new Error("This Page is not available")
-    //    }
 
-        const nfts = await query ;
+         const features = new ApiFeatures(NFT.find(),req.query)
+         .filter()
+         .sort()
+         .limitFields()
+         .pagination();
+        const nfts = await features.query ;
 //Sending the response
         res.status(200).json({
             status: 'success',
@@ -135,3 +99,42 @@ exports.deleteNft= async (req,res)=>{
         });
     }
 };
+
+
+exports.getNFTStats = async (req,res)=>{
+
+    try{
+       const stats = await NFT.aggregate([
+        {
+            $match:{ ratingsAverage: { $gte:4.5}},
+        },
+        {
+           $group: {
+            _id: null,
+            Nftno :{$sum : 1},
+            numRating :{$sum : "$ratingsQuantity"},
+            avgRating: {$avg: "$ratingsAverage"},
+            avgPrice: {$avg: "$price"},
+            minPrice: {$min:"$price"},
+            maxPrice: {$max: "$price"},
+           }
+        },
+        {
+            $sort: {avgRating : 1}
+        }
+    ]
+    );
+    console.log(stats);
+    res.status(200).json({
+        status: "success",
+        data:stats
+    });
+    }
+    
+    catch(error){
+        res.status(404).json({
+            status:"fail",
+            message: error
+        });
+    }
+}
