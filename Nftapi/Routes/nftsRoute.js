@@ -1,6 +1,7 @@
 const express = require('express');
 const {checkID} = require('../Controller/nftController');
 const {checkBody}= require('../Controller/nftController');
+const {protect,rstrictTo} = require('../Controller/authController');
 const {
     getNfts,
     getNft,
@@ -22,11 +23,11 @@ app.use(express.json());
 router.route('/nfts-stats').get(getNFTStats);
 
 router.route('/')
-     .get(getNfts)
+     .get(protect,getNfts)
      .post(createNft);
 router.route('/:id')
       .get(getNft)
       .patch(updateNft)
-      .delete(deleteNft);
+      .delete(protect,rstrictTo("admin","guide"),deleteNft);
 
 module.exports = router;      

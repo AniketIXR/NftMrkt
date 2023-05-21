@@ -76,23 +76,34 @@ nftSchema.pre("save",function(next){
     this.slug = slugify(this,name,{lower:true});
     next();
 });
-//This will run after the data is saved to the database
+//This will run after the data is saved to the database and we can access the document
 nftSchema.post("save",function(doc,next){
     console.log(doc);
 });
 
 //Query Middleware
-//If we want some specific data to be only vissible to specific users
-nftSchema.pre("find",function(next){
-    this.find({secretNfts:{$ne:true}});
-    next();
-});
-//This works for every operation delete patch .....
-nftSchema.pre("findOne",function(next){
+// //If we want some specific data to be only vissible to specific users
+// nftSchema.pre("find",function(next){
+//     this.find({secretNfts:{$ne:true}});
+//     next();
+// });
+// //This works for every operation delete patch .....
+// nftSchema.pre("findOne",function(next){
+//     this.find({secretNfts:{$ne:true}});
+//     next();
+// });
+
+//This '^' makes the find function golbal means it will work on all crud methods
+nftSchema.pre(/^find/,function(next){
     this.find({secretNfts:{$ne:true}});
     next();
 });
 
+//Aggregate Middleware
+nftSchema.pre("aggregate",function(next){
+   console.log(this.pipeline().unshift({match:{secretNfts:{$ne:true}}}))
+   next();
+});
 
 const NFT = mongoose.model("NFT",nftSchema); 
 module.exports = NFT;

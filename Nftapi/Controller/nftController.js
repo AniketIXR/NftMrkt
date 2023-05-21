@@ -1,10 +1,10 @@
 
 const NFT = require('../models/nftModels');
 const ApiFeatures = require('../Utils/apiFeatures');
-exports.getNfts =async(req, res)=>{
-  
-    try {
+const {catchAsync} = require('../Utils/catchAsync');
 
+exports.getNfts =catchAsync(async(req, res,next)=>{
+  
          const features = new ApiFeatures(NFT.find(),req.query)
          .filter()
          .sort()
@@ -19,16 +19,10 @@ exports.getNfts =async(req, res)=>{
                 nfts
             },
         });
-    } catch (error) {
-        res.status(404).json({
-            status:'fail',
-            message:error
-        });
-    }
-};
+    
+});
 
-exports.getNft =async(req, res)=>{
-    try {
+exports.getNft =catchAsync(async(req, res,next)=>{
         const nft =await NFT.findById(req.params.id); 
         res.status(200).json({
             status:'success',
@@ -36,18 +30,10 @@ exports.getNft =async(req, res)=>{
                 nft
             }
         });
-        
-    } catch (error) {
-        res.status(404).json({
-            status:'fail',
-            message:error
-        });
-    }
+});
 
-};
+exports.createNft =catchAsync( async (req, res,next)=>{
 
-exports.createNft = async (req, res)=>{
-    try {
         const newNFT = await NFT.create(req.body);
         res.status(201).json({
             status:"success",
@@ -55,16 +41,11 @@ exports.createNft = async (req, res)=>{
                 nft : newNFT
             }
         });   
-    } catch (error) {
-        res.status(404).json({
-            status:"fail",
-            message: error
-        });
-    }
-};
+    
+});
 
-exports.updateNft= async (req, res) => {
-  try {
+exports.updateNft= catchAsync(async (req, res,next) => {
+ 
     const nft = await NFT.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators : true,
@@ -75,35 +56,22 @@ exports.updateNft= async (req, res) => {
             nft
         } 
     });
-  } catch (error) {
-    res.status(404).json({
-        status:"fail",
-        message: error
-    });
-    
-  }
-};
 
-exports.deleteNft= async (req,res)=>{
-    try {
+});
+
+exports.deleteNft=catchAsync(async (req,res,next)=>{
+  
     await NFT.findByIdAndDelete(req.params.id);
     //if no content is there in the body then its due to the 204 , as its define displaying no data 
     res.status(204).json({
         status: "success",
         data:null
     });
-    } catch (error) {
-        res.status(404).json({
-            status:"fail",
-            message: error
-        });
-    }
-};
+    
+});
 
 
-exports.getNFTStats = async (req,res)=>{
-
-    try{
+exports.getNFTStats =catchAsync( async (req,res,next)=>{
        const stats = await NFT.aggregate([
         {
             $match:{ ratingsAverage: { $gte:4.5}},
@@ -129,12 +97,4 @@ exports.getNFTStats = async (req,res)=>{
         status: "success",
         data:stats
     });
-    }
-    
-    catch(error){
-        res.status(404).json({
-            status:"fail",
-            message: error
-        });
-    }
-}
+});

@@ -12,7 +12,7 @@ const DB = process.env.DATABASE.replace(
 mongoose.connect(DB,{
     useCreateIndex: true,
     useFindAndModify: false,
-    useNewUrlParse: true
+    useNewUrlParser: true
 }).then((con)=>{
     // console.log(con.connection);
     console.log("Connection Done");
@@ -21,4 +21,18 @@ mongoose.connect(DB,{
 const port = process.env.PORT;
 app.listen(port, ()=>{
     console.log(`App runnign on port ${port}..`);
+});
+
+process.on('unhandledRejection',err=>{
+    console.log(err.name,err.message);
+    console.log("UNHANDLED REJECTION! Shutting down...");
+    server.close(()=>{
+        process.exit(1);
+    });
+});
+
+process.on('uncaughtException',err=>{
+    console.log(err.name,err.message);
+    console.log("UNCAUGHT EXCEPTION! Shutting down...");
+    process.exit(1);
 });
